@@ -1,7 +1,7 @@
 import 'package:demo_app/features/home/myhomepage.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'login_controller.dart';
 
 final loginControllerProvider =
@@ -11,13 +11,6 @@ final passwordProvider = StateProvider<String>((ref) => '');
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
-
-  bool validatePassword(String password) {
-    if (password.isEmpty || password.length < 6) {
-      return false;
-    }
-    return true;
-  }
 
   showWarning(BuildContext ctx) {
     showDialog(
@@ -31,7 +24,7 @@ class LoginPage extends ConsumerWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -44,24 +37,57 @@ class LoginPage extends ConsumerWidget {
     final email = ref.read(emailProvider.notifier).state.trim();
     final password = ref.read(passwordProvider.notifier).state.trim();
     final loginController = ref.watch(loginControllerProvider);
-    nextPage(BuildContext context) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(email: email, password: password),
-        ),
+    // nextPage(BuildContext context) {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(
+    //       builder: (context) => MyHomePage(email: email, password: password),
+    //     ),
+    //   );
+    // }
+
+    void showSnackBar(BuildContext context, String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
       );
     }
 
-    login() async {
+    signUpUser() async {
+      final email = ref.read(emailProvider.notifier).state.trim();
+      final password = ref.read(passwordProvider.notifier).state.trim();
+
+      if (email.length < 6 || password.length < 6) {
+        showSnackBar(
+            context, 'Email and password should be at least 6 characters');
+        return;
+      }
+
       try {
-        await loginController.login(email, password);
-        if (loginController.isLoggedIn) {
-          // ignore: use_build_context_synchronously
-          nextPage(context);
-        } else if (!loginController.isLoggedIn) {
-          // ignore: use_build_context_synchronously
-          showWarning(context);
-        }
+        await loginController.signUpUser(
+          context: context,
+          email: email,
+          password: password,
+        );
+      } catch (e) {
+        showWarning(context);
+      }
+    }
+
+    loginUser() async {
+      final email = ref.read(emailProvider.notifier).state.trim();
+      final password = ref.read(passwordProvider.notifier).state.trim();
+
+      if (email.length < 6 || password.length < 6) {
+        showSnackBar(
+            context, 'Email and password should be at least 6 characters');
+        return;
+      }
+
+      try {
+        await loginController.loginUser(
+          context: context,
+          email: email,
+          password: password,
+        );
       } catch (e) {
         showWarning(context);
       }
@@ -97,8 +123,12 @@ class LoginPage extends ConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: login,
-            child: const Text('Login'),
+            onPressed: signUpUser,
+            child: const Text('signUpUser'),
+          ),
+          ElevatedButton(
+            onPressed: loginUser,
+            child: const Text('signInUser'),
           ),
         ],
       ),

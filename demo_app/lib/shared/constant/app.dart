@@ -1,5 +1,5 @@
 class App {
-  static const baseUrl = "";
+  static const baseUrl = "https://fpoly-hcm.herokuapp.com/api/";
 }
 
 class Theme {

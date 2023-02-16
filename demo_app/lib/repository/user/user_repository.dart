@@ -1,25 +1,36 @@
 import 'package:demo_app/model/user.dart';
 import 'package:demo_app/repository/user/user_local.dart';
 import 'package:demo_app/repository/user/user_service.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 abstract class UserRepo {
-  login(String email, String password) {}
-  register() {}
+  signUpUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {}
+  loginUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {}
 }
 
 class UserRepositoryImpl implements UserRepo {
   final userServiceProvider = Provider<UserRepo>((ref) => UserRepositoryImpl());
-  final userServiceImpl = UserServiceImpl();
-  @override
-  Future<bool> login(String email, String password) async {
-    print('Đây là repository gọi lớp ở Service làm');
-    bool isValidUser = await userServiceImpl.login(email, password);
-    return isValidUser;
+  final UserServiceImpl userServiceImpl = UserServiceImpl();
+  signUpUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {
+    return userServiceImpl.signUpUser(
+        context: context, email: email, password: password);
   }
 
-  @override
-  void register() {
-    // TODO: implement register
+  loginUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {
+    return userServiceImpl.loginUser(
+        context: context, email: email, password: password);
   }
 }
