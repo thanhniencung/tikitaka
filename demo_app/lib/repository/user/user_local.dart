@@ -6,7 +6,7 @@ abstract class UserLocal {
 
 class UserLocalImpl implements UserLocal {
   @override
-  void cacheUser(User user) {
-    // Trực tiếp xủ lý chi tiết với database Sqlite
-  }
+  void cacheUser(User user) {}
 }
+
+// caching

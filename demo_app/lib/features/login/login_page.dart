@@ -1,96 +1,41 @@
-import 'package:demo_app/features/home/myhomepage.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../repository/user/user_repository.dart';
+import '../../repository/user/user_service.dart';
 import 'login_controller.dart';
 
-final loginControllerProvider =
-    ChangeNotifierProvider((ref) => LoginControllerImpl());
-final emailProvider = StateProvider<String>((ref) => '');
-final passwordProvider = StateProvider<String>((ref) => '');
+final userServiceImpl = UserServiceImpl();
+final userRepositoryImpl = UserRepositoryImpl(userServiceImpl: userServiceImpl);
+final loginProvider = Provider(
+  (ref) => LoginController(
+    userRepositoryImpl: userRepositoryImpl,
+  ),
+);
 
 class LoginPage extends ConsumerWidget {
-  const LoginPage({super.key});
+  final tecEmail = TextEditingController();
+  final tecPass = TextEditingController();
 
-  showWarning(BuildContext ctx) {
-    showDialog(
-      context: ctx,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Warning'),
-          content: const Text('Incorrect username or password!!!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final email = ref.read(emailProvider.notifier).state.trim();
-    final password = ref.read(passwordProvider.notifier).state.trim();
-    final loginController = ref.watch(loginControllerProvider);
-    // nextPage(BuildContext context) {
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(
-    //       builder: (context) => MyHomePage(email: email, password: password),
-    //     ),
-    //   );
-    // }
+    final LoginController controller = ref.watch(loginProvider);
 
-    void showSnackBar(BuildContext context, String message) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
+    handleClickRegisterButton() async {
+      controller.handleLogin(
+        email: tecEmail.text,
+        password: tecPass.text,
       );
     }
 
-    signUpUser() async {
-      final email = ref.read(emailProvider.notifier).state.trim();
-      final password = ref.read(passwordProvider.notifier).state.trim();
-
-      if (email.length < 6 || password.length < 6) {
-        showSnackBar(
-            context, 'Email and password should be at least 6 characters');
-        return;
-      }
-
-      try {
-        await loginController.signUpUser(
-          context: context,
-          email: email,
-          password: password,
-        );
-      } catch (e) {
-        showWarning(context);
-      }
-    }
-
-    loginUser() async {
-      final email = ref.read(emailProvider.notifier).state.trim();
-      final password = ref.read(passwordProvider.notifier).state.trim();
-
-      if (email.length < 6 || password.length < 6) {
-        showSnackBar(
-            context, 'Email and password should be at least 6 characters');
-        return;
-      }
-
-      try {
-        await loginController.loginUser(
-          context: context,
-          email: email,
-          password: password,
-        );
-      } catch (e) {
-        showWarning(context);
-      }
+    handleClickLoginButton() async {
+      controller.handleLogin(
+        email: tecEmail.text,
+        password: tecPass.text,
+      );
     }
 
     return Scaffold(
@@ -100,8 +45,7 @@ class LoginPage extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
-              onChanged: (value) =>
-                  ref.read(emailProvider.notifier).state = value,
+              controller: tecEmail,
               decoration: const InputDecoration(
                 labelText: 'Username',
               ),
@@ -112,8 +56,7 @@ class LoginPage extends ConsumerWidget {
             child: Column(
               children: [
                 TextField(
-                  onChanged: (value) =>
-                      ref.read(passwordProvider.notifier).state = value,
+                  controller: tecEmail,
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Password',
@@ -123,11 +66,11 @@ class LoginPage extends ConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: signUpUser,
+            onPressed: handleClickRegisterButton,
             child: const Text('signUpUser'),
           ),
           ElevatedButton(
-            onPressed: loginUser,
+            onPressed: handleClickLoginButton,
             child: const Text('signInUser'),
           ),
         ],

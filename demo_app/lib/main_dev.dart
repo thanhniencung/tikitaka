@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'network/network.dart';
+import 'network/tikitaka_client.dart';
 
 void main() {
+  TikiClient().init();
   runApp(const MyApp());
 }
 

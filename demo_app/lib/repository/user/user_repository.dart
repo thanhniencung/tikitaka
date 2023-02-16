@@ -1,36 +1,52 @@
-import 'package:demo_app/model/user.dart';
-import 'package:demo_app/repository/user/user_local.dart';
+import 'dart:async';
+
 import 'package:demo_app/repository/user/user_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../../model/user.dart';
 
 abstract class UserRepo {
-  signUpUser(
-      {required BuildContext context,
-      required String email,
-      required String password}) {}
-  loginUser(
-      {required BuildContext context,
-      required String email,
-      required String password}) {}
+  Future<User>? signUpUser({
+    required User user,
+  }) {}
+  Future<User>? loginUser({
+    required User user,
+  }) {}
 }
 
 class UserRepositoryImpl implements UserRepo {
-  final userServiceProvider = Provider<UserRepo>((ref) => UserRepositoryImpl());
-  final UserServiceImpl userServiceImpl = UserServiceImpl();
-  signUpUser(
-      {required BuildContext context,
-      required String email,
-      required String password}) {
-    return userServiceImpl.signUpUser(
-        context: context, email: email, password: password);
+  final UserServiceImpl _userServiceImpl;
+
+  UserRepositoryImpl({required UserServiceImpl userServiceImpl})
+      : _userServiceImpl = userServiceImpl;
+
+  @override
+  Future<User>? signUpUser({
+    required User user,
+  }) async {
+    var completer = Completer<User>();
+    try {
+      var response = await _userServiceImpl.signUpUser(user: user);
+      print(response.data);
+      completer.complete(User());
+    } on DioError catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 
-  loginUser(
-      {required BuildContext context,
-      required String email,
-      required String password}) {
-    return userServiceImpl.loginUser(
-        context: context, email: email, password: password);
+  @override
+  Future<User>? loginUser({
+    required User user,
+  }) async {
+    var completer = Completer<User>();
+    try {
+      var response = await _userServiceImpl.loginUser(user: user);
+      print(response.data);
+    } on DioError catch (e) {
+      completer.completeError(e);
+    }
+    return completer.future;
   }
 }

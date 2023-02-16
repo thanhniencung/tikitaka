@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,6 +26,7 @@ httpErrorHandle({
 void showSnackBar(BuildContext context, String text) {
   try {
     ScaffoldMessenger.of(context).showSnackBar(
+      // Toast.make(context, "message", Toast.LENG_LONG | Toast.LENG_SHORT).show();
       SnackBar(
         content: Text(text),
       ),

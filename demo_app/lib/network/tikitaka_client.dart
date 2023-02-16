@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 
-class Network {
-  static final Network _instance = Network._internal();
-  factory Network() {
+class TikiClient {
+  static final TikiClient _instance = TikiClient._internal();
+  factory TikiClient() {
     return _instance;
   }
-  Network._internal();
+  TikiClient._internal();
 
   var dio = Dio();
 
@@ -36,7 +36,7 @@ class Network {
     }));
   }
 
-  Dio restClient() {
+  Dio dioInstance() {
     return dio;
   }
 }
