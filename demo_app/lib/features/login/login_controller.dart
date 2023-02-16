@@ -1,33 +1,41 @@
 import 'package:demo_app/repository/user/user_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../model/user.dart';
-import '../../repository/user/user_service.dart';
 
 abstract class LoginController {
-  login(String email, String password);
+  signUpUser(
+      {required BuildContext context,
+      required String email,
+      required String password});
+  loginUser(
+      {required BuildContext context,
+      required String email,
+      required String password});
 }
 
 class LoginControllerImpl extends ChangeNotifier implements LoginController {
   final userRepo = UserRepositoryImpl();
-  bool _isLoggedIn = false;
-  bool get isLoggedIn => _isLoggedIn;
 
-  Future<void> login(String email, String password) async {
-    print("Đây là controller gọi lớp Repository làm");
+  signUpUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {
     try {
-      bool isValidUser = await userRepo.login(email, password);
-      if (isValidUser) {
-        _isLoggedIn = true;
-        notifyListeners();
-      } else {
-        _isLoggedIn = false;
-        notifyListeners();
-      }
+      return userRepo.signUpUser(
+          context: context, email: email, password: password);
     } catch (e) {
-      _isLoggedIn = false;
-      notifyListeners();
-      throw Exception(e.toString());
-    } finally {}
+      print(e.toString());
+    }
+  }
+
+  loginUser(
+      {required BuildContext context,
+      required String email,
+      required String password}) {
+    try {
+      return userRepo.loginUser(
+          context: context, email: email, password: password);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

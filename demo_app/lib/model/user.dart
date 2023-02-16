@@ -1,16 +1,40 @@
-class UserModel {
-  final String id;
-  final String username;
+import 'dart:convert';
+
+class User {
+  final String email;
   final String password;
 
-  UserModel({
-    required this.id,
-    required this.username,
+  User({
+    required this.email,
     required this.password,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-        id: json['id'], username: json['username'], password: json['password']);
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'password': password,
+    };
+  }
+
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      email: map['email'] ?? '',
+      password: map['password'] ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory User.fromJson(String source) => User.fromMap(json.decode(source));
+
+  User copyWith({
+    String? email,
+    String? password,
+    List<dynamic>? cart,
+  }) {
+    return User(
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
   }
 }

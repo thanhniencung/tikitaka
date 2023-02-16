@@ -1,7 +1,7 @@
 import 'package:demo_app/features/home/myhomepage.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'login_controller.dart';
 
 final loginControllerProvider =
@@ -31,7 +31,7 @@ class LoginPage extends ConsumerWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -52,16 +52,18 @@ class LoginPage extends ConsumerWidget {
       );
     }
 
-    login() async {
+    signUpUser() async {
       try {
-        await loginController.login(email, password);
-        if (loginController.isLoggedIn) {
-          // ignore: use_build_context_synchronously
-          nextPage(context);
-        } else if (!loginController.isLoggedIn) {
-          // ignore: use_build_context_synchronously
-          showWarning(context);
-        }
+        await loginController.signUpUser(
+            context: context, email: email, password: password);
+      } catch (e) {
+        showWarning(context);
+      }
+    }
+    loginUser() async {
+      try {
+        await loginController.loginUser(
+            context: context, email: email, password: password);
       } catch (e) {
         showWarning(context);
       }
@@ -97,8 +99,12 @@ class LoginPage extends ConsumerWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: login,
-            child: const Text('Login'),
+            onPressed: signUpUser,
+            child: const Text('signUpUser'),
+          ),
+          ElevatedButton(
+            onPressed: loginUser,
+            child: const Text('signUpUser'),
           ),
         ],
       ),
