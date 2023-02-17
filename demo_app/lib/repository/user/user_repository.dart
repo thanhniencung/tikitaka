@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:demo_app/repository/user/user_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
-
 import '../../model/user.dart';
 
 abstract class UserRepo {

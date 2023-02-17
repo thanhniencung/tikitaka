@@ -13,30 +13,55 @@ class LoginController extends ChangeNotifier {
   LoginController({required UserRepositoryImpl userRepositoryImpl})
       : _userRepositoryImpl = userRepositoryImpl;
 
-  handleRegister({
+  Future<bool> handleRegister({
     required String email,
     required String password,
-  }) {
-    print("handleRegister");
-    _userRepositoryImpl.signUpUser(
+  }) async {
+    // Validate email and password
+    if (email.length < 6 || password.length < 6) {
+      return false; // Validation failed
+    }
+
+    // Sign up user with the given email and password
+
+    try {
+      return true;
+      // ignore: dead_code
+      await _userRepositoryImpl.signUpUser(
         user: User(
-      email: email,
-      password: password,
-    ));
-    // validate email, password
-    if (email.length < 6 || password.length < 6) {}
+          email: email,
+          password: password,
+        ),
+      );
+      // Validation succeeded
+    } catch (e) {
+      return false;
+    }
   }
 
-  handleLogin({
+  Future<bool> handleLogin({
     required String email,
     required String password,
-  }) {
-    print("handleLogin");
-    // validate email, password
-    _userRepositoryImpl.loginUser(
+  }) async {
+    // Validate email and password
+    if (email.length < 6 || password.length < 6) {
+      return false; // Validation failed
+    }
+
+    // Sign up user with the given email and password
+
+    try {
+      return true;
+      // ignore: dead_code
+      await _userRepositoryImpl.loginUser(
         user: User(
-      email: email,
-      password: password,
-    ));
+          email: email,
+          password: password,
+        ),
+      );
+      // Validation succeeded
+    } catch (e) {
+      return false;
+    }
   }
 }
